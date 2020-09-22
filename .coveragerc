@@ -1,0 +1,8 @@
+# Questo file configura la coverage
+# https://pytest-cov.readthedocs.io/en/latest/config.html
+
+[run]
+omit = .tox
+
+[tool:pytest]
+addopts = --cov=test_* --cov-report=term-missing
