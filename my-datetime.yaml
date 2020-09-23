@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  description: prova
+  version: 0.0.1
+  title: prova
+  termsOfService: http://example.org/TOS
+  contact:
+    name: Lorenzo Cameroni
+    email: lorenzo.cameroni@par-tec.it
+    url: https://lorenzo.cameroni.eu/
+  x-summary: ciao
+  x-api-id: ciao
+
+tags:
+- name: public
+
+components:
+  schemas:
+    Citizen:
+      title: Cittadino
+      default: null
+      description: |-
+        Lo schema di un cittadino dove la chiave è il `tax_code`,
+        che rappresenta il codice fiscale.
+        
+        Se questo oggetto è definito in un documento esterno o deve rispettare 
+        determinate caratteristiche posso metterle qui.
+        
+        ## Riferimenti
+        Qui tutti i riferimenti
+      additionalProperties: false
+      externalDocs: 
+        url: https://example.com/citizen
+      example: 
+        given_name: Lorenzo
+        family_name: Cameroni
+        tax_code: CMRLRT88L05F205S
+      type: object
+      required: 
+        - tax_code
+      properties:
+        given_name:
+          type: string
+          example: Leon Battista
+          description: descrizione del nome
+        family_name:
+          type: string
+          example: Alberti
+        tax_code:
+          type: string
+          pattern: ^[A-Z0-9]{16}
+          example: LBRLBT72D25D969F
+    ISOTimestamp:
+      description: |-
+        Rappresenta un istante di tempo in timezone UTC.
+      type: object
+      additionalProperties: false
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc3339
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2020-01-01T00:00:00Z"
+    Problem:
+      description: Un problema...
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+          example: 500
+        title:
+          type: string
+          example: Internal Server Error
+        detail:
+          type: string
+          example: The server is not working
+
+servers:
+  - description: Development server
+    url: /datetime/v1
+    x-sandbox: true
+
+paths:
+  /status:
+    get:
+      summary: Return the application status.
+      description: |-
+        Return the application status. You may want
+        to implement this so that it randomically
+        returns an error (eg. 429 or 503).
+        
+        A successful example is:
+        ```
+        {"status": 200, "title": "OK", "detail": ""The server is UP"}
+        ```
+        
+        ```
+        {"status": 500, "title": "Internal Server Error", "detail": "The server is not working"}
+        ```
+      operationId: api.get_status
+      tags:
+      - public
+      responses:
+        '200':
+          description: |
+            The status is OK.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        'default':
+          description: ciao
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /echo:
+    get:
+      summary: Endpoint echo
+      description: Get current time, UTC timezone
+      operationId: api.echo
+      tags:
+      - public
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ISOTimestamp'
+        'default':
+          description: Some problem occurred
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
